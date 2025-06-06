@@ -4,6 +4,7 @@ locals {
 }
 
 data "aws_subnets" "private" {
+  depends_on = [module.vpc]
   filter {
     name   = "vpc-id"
     values = [module.vpc.vpc_id]
@@ -16,8 +17,8 @@ data "aws_subnets" "private" {
 
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  
+  source = "terraform-aws-modules/eks/aws"
+
   cluster_name    = local.cluster_name
   cluster_version = var.cluster_version
 
@@ -37,7 +38,7 @@ module "eks" {
       labels = {
         "mgmt-node-group" = "true"
       }
-      
+
       launch_template_tags = {
         Name           = "nodegroup/${local.cluster_name}"
         "cluster-name" = "${local.cluster_name}"
@@ -88,8 +89,9 @@ module "eks" {
 }
 
 module "eks_blueprints_addons" {
-  source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "~> 1.0"
+  source     = "aws-ia/eks-blueprints-addons/aws"
+  version    = "~> 1.0"
+  depends_on = [module.eks]
 
   cluster_name      = module.eks.cluster_name
   cluster_endpoint  = module.eks.cluster_endpoint
@@ -99,5 +101,5 @@ module "eks_blueprints_addons" {
   create_kubernetes_resources = true
 
   # EKS Blueprints Addons
-  enable_aws_load_balancer_controller = true 
+  enable_aws_load_balancer_controller = true
 }

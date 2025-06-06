@@ -33,42 +33,6 @@ resource "aws_security_group" "alb_controller" {
   }
 }
 
-# ALB Controller 설치
-# resource "helm_release" "aws_load_balancer_controller" {
-#   depends_on = [module.eks]
-
-#   name       = "aws-load-balancer-controller"
-#   repository = "https://aws.github.io/eks-charts"
-#   chart      = "aws-load-balancer-controller"
-#   namespace  = "kube-system"
-#   version    = "1.7.1"
-
-#   set {
-#     name  = "clusterName"
-#     value = local.cluster_name
-#   }
-
-#   set {
-#     name  = "serviceAccount.create"
-#     value = "true"
-#   }
-
-#   set {
-#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-#     value = module.eks.cluster_iam_role_arn
-#   }
-
-#   set {
-#     name  = "region"
-#     value = "ap-northeast-2"
-#   }
-
-#   set {
-#     name  = "vpcId"
-#     value = module.vpc.vpc_id
-#   }
-# }
-
 # ECR 레포지토리 생성
 resource "aws_ecr_repository" "spring_boot" {
   name         = "spring-boot-app"
@@ -125,7 +89,7 @@ resource "null_resource" "build_and_push" {
 
 # Spring Boot 애플리케이션 배포
 resource "kubernetes_deployment" "spring_boot" {
-  depends_on = [null_resource.build_and_push]
+  depends_on = [null_resource.build_and_push, module.eks]
 
   metadata {
     name = "spring-boot-app"
