@@ -3,6 +3,7 @@
 이 프로젝트는 AWS EKS를 사용하여 Spring Boot 애플리케이션을 배포하는 인프라스트럭처를 Terraform으로 구성합니다.
 
 ## 인프라스트럭처 구성
+![archi](https://github.com/user-attachments/assets/98ec60c7-a49a-48a3-a505-3590716c3295)
 
 ### 네트워크 구성
 - VPC CIDR: 10.21.0.0/16
@@ -46,4 +47,3 @@ terraform destroy
 ## 주의사항
 - AWS CLI와 kubectl, docker가 설치되어 있어야 합니다.
 - 적절한 AWS 자격 증명이 구성되어 있어야 합니다.
-- Docker가 설치되어 있어야 합니다.
